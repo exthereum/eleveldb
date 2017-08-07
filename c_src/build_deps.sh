@@ -17,7 +17,7 @@ set -e
 if [ `basename $PWD` != "c_src" ]; then
     # originally "pushd c_src" of bash
     # but no need to use directory stack push here
-    cd c_src
+    cd ./c_src
 fi
 
 BASEDIR="$PWD"
@@ -69,11 +69,11 @@ case "$1" in
 
         if [ ! -d snappy-$SNAPPY_VSN ]; then
             tar -xzf snappy-$SNAPPY_VSN.tar.gz
-            (cd snappy-$SNAPPY_VSN && ./configure --disable-shared --prefix=$BASEDIR/system --libdir=$BASEDIR/system/lib --with-pic)
+            (cd ./snappy-$SNAPPY_VSN && ./configure --disable-shared --prefix=$BASEDIR/system --libdir=$BASEDIR/system/lib --with-pic)
         fi
 
         if [ ! -f system/lib/libsnappy.a ]; then
-            (cd snappy-$SNAPPY_VSN && $MAKE && $MAKE install)
+            (cd ./snappy-$SNAPPY_VSN && $MAKE && $MAKE install)
         fi
 
         export CFLAGS="$CFLAGS -I $BASEDIR/system/include"
@@ -84,9 +84,9 @@ case "$1" in
 
         if [ ! -d leveldb ]; then
             git clone git://github.com/basho/leveldb
-            (cd leveldb && git checkout $LEVELDB_VSN)
+            (cd ./leveldb && git checkout $LEVELDB_VSN)
             if [ $BASHO_EE = "1" ]; then
-                (cd leveldb && git submodule update --init)
+                (cd ./leveldb && git submodule update --init)
             fi
         fi
 
@@ -94,9 +94,9 @@ case "$1" in
         #  and causes build errors in leveldb
         export MAKEFLAGS=
 
-        (cd leveldb && $MAKE -j 3 all)
-        (cd leveldb && $MAKE -j 3 tools)
-        (cp leveldb/perf_dump leveldb/sst_rewrite leveldb/sst_scan leveldb/leveldb_repair ../priv)
+        (cd ./leveldb && $MAKE -j 3 all)
+        (cd ./leveldb && $MAKE -j 3 tools)
+        (cp ./leveldb/perf_dump leveldb/sst_rewrite leveldb/sst_scan leveldb/leveldb_repair ../priv)
 
         ;;
 esac
